@@ -1,0 +1,85 @@
+{
+  "name": "Classify_PN_Cells",
+  "description": "CLassification of cells to positive or negative based on https://doi.org/10.1007/978-3-319-19156-0_17",
+  "container-image": {
+    "image": "cytomine/s_python_classifypncell",
+    "type": "singularity"
+  },
+  "command-line": "python s_python_classifypncell.py CYTOMINE_HOST CYTOMINE_PUBLIC_KEY CYTOMINE_PRIVATE_KEY CYTOMINE_ID_PROJECT CYTOMINE_ID_SOFTWARE CYTOMINE_ID_IMAGES CYTOMINE_ID_ROI_TERM",
+  "inputs": [
+    {
+      "id": "cytomine_host",
+      "value-key": "[@ID]",
+      "command-line-flag": "--@id",
+      "name": "Cytomine host",
+      "set-by-server": true,
+      "optional": false,
+      "type": "String"
+    },
+    {
+      "id": "cytomine_public_key",
+      "value-key": "[@ID]",
+      "command-line-flag": "--@id",
+      "name": "Cytomine public key",
+      "set-by-server": true,
+      "optional": false,
+      "type": "String"
+    },
+    {
+      "id": "cytomine_private_key",
+      "value-key": "[@ID]",
+      "command-line-flag": "--@id",
+      "name": "Cytomine private key",
+      "set-by-server": true,
+      "optional": false,
+      "type": "String"
+    },
+    {
+      "id": "cytomine_id_project",
+      "value-key": "[@ID]",
+      "command-line-flag": "--@id",
+      "name": "Cytomine project ID",
+      "set-by-server": true,
+      "optional": false,
+      "type": "Number"
+    },
+    {
+      "id": "cytomine_id_software",
+      "value-key": "[@ID]",
+      "command-line-flag": "--@id",
+      "name": "Cytomine software ID",
+      "set-by-server": true,
+      "optional": false,
+      "type": "Number"
+    },
+    {
+      "id": "cytomine_id_images",
+      "value-key": "@ID",
+      "command-line-flag": "--@id",
+      "name": "Cytomine Image IDs",
+      "description": "Images on which to classify objects",
+      "set-by-server": false,
+      "optional": false,
+      "type": "ListDomain",
+          "uri": "/api/project/$currentProject$/imageinstance.json",
+          "uri-print-attribute": "instanceFilename",
+          "uri-sort-attribute": "instanceFilename"
+    },
+
+    {
+      "id": "cytomine_id_roi_term",
+      "value-key": "@ID",
+      "command-line-flag": "--@id",
+      "name": "Cytomine ROI term ID",
+      "description": "Ontology term ID for ROI(s) to classify cell",
+      "set-by-server": false,
+      "optional": false,
+      "type": "Domain",
+      "uri": "/api/ontology/$currentOntology$/term.json",
+      "uri-print-attribute": "name",
+      "uri-sort-attribute": "name"
+    },
+  ],
+
+  "schema-version": "cytomine-0.1"
+}
