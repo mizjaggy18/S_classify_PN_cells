@@ -2,7 +2,7 @@
   "name": "Classify_PN_Cells",
   "description": "Classification of cells to positive or negative",
   "container-image": {
-    "image": "cytomine/s_python_classifypncell",
+    "image": "mizjaggy18/s_python_classifypncell",
     "type": "singularity"
   },
   "command-line": "python classifypncell.py CYTOMINE_HOST CYTOMINE_PUBLIC_KEY CYTOMINE_PRIVATE_KEY CYTOMINE_ID_PROJECT CYTOMINE_ID_SOFTWARE CYTOMINE_ID_IMAGES CYTOMINE_ID_ROI_TERM",
