@@ -13,7 +13,12 @@
 # * limitations under the License.
 
 FROM cytomine/software-python3-base
+#INSTALL
+RUN apt-get update
+RUN pip install numpy
 
+
+#ADD FILES
 ADD classifypncell.py /app/classifypncell.py
 
 ENTRYPOINT ["python", "/app/classifypncell.py"]
