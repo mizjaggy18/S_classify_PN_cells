@@ -18,4 +18,4 @@ ADD descriptor.json /app/descriptor.json
 RUN mkdir -p /app
 ADD s_python_classifypncell.py /app/s_python_classifypncell.py
 
-ENTRYPOINT ["python3", "/app/s_python_classifypncell.py"]
+ENTRYPOINT ["python", "/app/s_python_classifypncell.py"]
