@@ -1,6 +1,6 @@
 {
   "name": "Classify_PN_Cells",
-  "description": "CLassification of cells to positive or negative based on https://doi.org/10.1007/978-3-319-19156-0_17",
+  "description": "Classification of cells to positive or negative",
   "container-image": {
     "image": "cytomine/s_python_classifypncell",
     "type": "singularity"
