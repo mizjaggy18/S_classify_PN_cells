@@ -5,7 +5,7 @@
     "image": "mizjaggy18/s_python_classifypncell",
     "type": "singularity"
   },
-  "command-line": "python classifypncell.py CYTOMINE_HOST CYTOMINE_PUBLIC_KEY CYTOMINE_PRIVATE_KEY CYTOMINE_ID_PROJECT CYTOMINE_ID_SOFTWARE CYTOMINE_ID_IMAGES CYTOMINE_ID_ROI_TERM",
+  "command-line": "python classifypncell.py --cytomine_host [CYTOMINE_HOST] --cytomine_public_key [CYTOMINE_PUBLIC_KEY] --cytomine_private_key [CYTOMINE_PRIVATE_KEY] --cytomine_id_project [CYTOMINE_ID_PROJECT] --cytomine_id_software [CYTOMINE_ID_SOFTWARE] --cytomine_id_images [CYTOMINE_ID_IMAGES] --cytomine_roi_term [CYTOMINE_ID_ROI_TERM]",
   "inputs": [
     {
       "id": "cytomine_host",
