@@ -14,6 +14,6 @@
 
 FROM cytomine/software-python3-base
 
-ADD s_python_classifypncell.py /app/s_python_classifypncell.py
+ADD classifypncell.py /app/classifypncell.py
 
-ENTRYPOINT ["python", "/app/s_python_classifypncell.py"]
+ENTRYPOINT ["python", "/app/classifypncell.py"]
