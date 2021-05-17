@@ -17,7 +17,7 @@
 
 __author__ = "WSH Munirah W Ahmad <wshmunirah@gmail.com>"
 __copyright__ = "MFA Fauzi, et al. 2015 (https://doi.org/10.1007/978-3-319-19156-0_17)"
-__version__ = "1.0.0"
+__version__ = "0.1.0"
 
 ##==== inside a folder containing Dockerfile, run: sudo docker build -t cytomine/s_python_classifypncell ====##
 
