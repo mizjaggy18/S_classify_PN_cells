@@ -1,5 +1,5 @@
 {
-  "name": "Classify_PN_Cells",
+  "name": "classify_PN_cells",
   "description": "Classification of cells to positive or negative",
   "container-image": {
     "image": "mizjaggy18/s_classify_pn_cells",
