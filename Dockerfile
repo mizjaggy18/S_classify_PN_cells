@@ -18,7 +18,6 @@ RUN apt-get update
 RUN pip install numpy
 RUN pip install shapely
 RUN pip install tifffile
-RUN pip install glob
 
 
 
