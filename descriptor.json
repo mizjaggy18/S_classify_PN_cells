@@ -75,7 +75,7 @@
       "uri": "/api/ontology/$currentOntology$/term.json",
       "uri-print-attribute": "term",
       "uri-sort-attribute": "created"
-    },
+    }
   ],
 
   "schema-version": "cytomine-0.1"
