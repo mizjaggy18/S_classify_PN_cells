@@ -5,7 +5,7 @@
     "image": "mizjaggy18/s_classify_pn_cells",
     "type": "singularity"
   },
-  "command-line": "python classifypncell.py --cytomine_host [CYTOMINE_HOST] --cytomine_public_key [CYTOMINE_PUBLIC_KEY] --cytomine_private_key [CYTOMINE_PRIVATE_KEY] --cytomine_id_project [CYTOMINE_ID_PROJECT] --cytomine_id_software [CYTOMINE_ID_SOFTWARE] --cytomine_id_images [CYTOMINE_ID_IMAGES] --cytomine_roi_term [CYTOMINE_ID_ROI_TERM]",
+  "command-line": "echo [CYTOMINE_HOST] [CYTOMINE_PUBLIC_KEY] [CYTOMINE_PRIVATE_KEY] [CYTOMINE_ID_PROJECT] [CYTOMINE_ID_SOFTWARE] [CYTOMINE_ID_IMAGES] [CYTOMINE_ID_ROI_TERM]",
   "inputs": [
     {
       "id": "cytomine_host",
@@ -58,26 +58,23 @@
       "command-line-flag": "--@id",
       "name": "Cytomine Image IDs",
       "description": "Images on which to classify objects",
-      "set-by-server": false,
       "optional": false,
       "type": "ListDomain",
-          "uri": "/api/project/$currentProject$/imageinstance.json",
-          "uri-print-attribute": "instanceFilename",
-          "uri-sort-attribute": "instanceFilename"
+      "uri": "/api/project/$currentProject$/imageinstance.json",
+      "uri-print-attribute": "instanceFilename",
+      "uri-sort-attribute": "created"
     },
-
     {
       "id": "cytomine_id_roi_term",
       "value-key": "@ID",
       "command-line-flag": "--@id",
       "name": "Cytomine ROI term ID",
       "description": "Ontology term ID for ROI(s) to classify cell",
-      "set-by-server": false,
       "optional": false,
       "type": "Domain",
       "uri": "/api/ontology/$currentOntology$/term.json",
-      "uri-print-attribute": "name",
-      "uri-sort-attribute": "name"
+      "uri-print-attribute": "term",
+      "uri-sort-attribute": "created"
     },
   ],
 
