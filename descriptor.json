@@ -105,7 +105,7 @@
       "uri": "/api/ontology/$currentOntology$/term.json",
       "uri-print-attribute": "name",
       "uri-sort-attribute": "name"
-      },
+    },
     {
       "id": "cytomine_id_negative_term",
       "value-key": "@ID",
@@ -117,7 +117,7 @@
       "uri": "/api/ontology/$currentOntology$/term.json",
       "uri-print-attribute": "name",
       "uri-sort-attribute": "name"
-      }    
+    }    
   ],
 
   "schema-version": "cytomine-0.1"
