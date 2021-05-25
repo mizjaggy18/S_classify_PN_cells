@@ -30,9 +30,9 @@ from tifffile import imread
 #from stardist import random_label_cmap
 #from stardist.models import StarDist2D
 from cytomine import Cytomine, models, CytomineJob
-from cytomine.models import Annotation, AnnotationTerm, AnnotationCollection, ImageInstanceCollection, Job, Project, ImageInstance, Property
-from cytomine.models.ontology import Ontology, OntologyCollection, Term, RelationTerm, TermCollection
-from cytomine.models.property import Tag, TagCollection, PropertyCollection
+from cytomine.models import Annotation, Ontology, AnnotationTerm, AnnotationCollection, ImageInstanceCollection, Job, Project, ImageInstance, Property, OntologyCollection, Term, RelationTerm, TermCollection
+#from cytomine.models.ontology import Ontology, OntologyCollection, Term, RelationTerm, TermCollection
+#from cytomine.models.property import Tag, TagCollection, PropertyCollection
 #from cytomine.utilities.software import parse_domain_list, setup_classify, stringify
 
 
