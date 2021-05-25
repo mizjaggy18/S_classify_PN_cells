@@ -1,11 +1,11 @@
 {
-  "name": "classify_PN_cells",
+  "name": "classify_PN_cells_test",
   "description": "Classification of cells to positive or negative",
   "container-image": {
-    "image": "mizjaggy18/s_classify_pn_cells",
+    "image": "mizjaggy18/s_classify_pn_cells_test",
     "type": "singularity"
   },
-  "command-line": "echo [CYTOMINE_HOST] [CYTOMINE_PUBLIC_KEY] [CYTOMINE_PRIVATE_KEY] [CYTOMINE_ID_PROJECT] [CYTOMINE_ID_SOFTWARE] [CYTOMINE_ID_IMAGES] [CYTOMINE_ID_ROI_TERM]",
+  "command-line": "echo [CYTOMINE_HOST] [CYTOMINE_PUBLIC_KEY] [CYTOMINE_PRIVATE_KEY] [CYTOMINE_ID_PROJECT] [CYTOMINE_ID_SOFTWARE] [CYTOMINE_ID_IMAGES] [CYTOMINE_ID_CELL_TERM] [CYTOMINE_ID_ANNOTATION_JOB] [CYTOMINE_ID_USER_JOB] [CYTOMINE_ID_POSITIVE_TERM] [CYTOMINE_ID_NEGATIVE_TERM]",
   "inputs": [
     {
       "id": "cytomine_host",
@@ -65,17 +65,59 @@
       "uri-sort-attribute": "created"
     },
     {
-      "id": "cytomine_id_roi_term",
+      "id": "cytomine_id_cell_term",
       "value-key": "@ID",
       "command-line-flag": "--@id",
-      "name": "Cytomine ROI term ID",
-      "description": "Ontology term ID for ROI(s) to classify cell",
+      "name": "Cytomine cell term ID",
+      "description": "Ontology term ID for the cells that will be classified into P or N",
       "optional": false,
       "type": "Domain",
       "uri": "/api/ontology/$currentOntology$/term.json",
-      "uri-print-attribute": "term",
-      "uri-sort-attribute": "created"
-    }
+      "uri-print-attribute": "name",
+      "uri-sort-attribute": "name"
+    },
+    {
+      "id": "cytomine_id_annotation_job",
+      "value-key": "@ID",
+      "command-line-flag": "--@id",
+      "name": "Cytomine Annotation Analysis Job ID",
+      "description": "Job ID of CellDetect Stardist analysis which annotations to be classified",
+      "optional": false,
+      "type": "Number"
+    },
+    {
+      "id": "cytomine_id_user_job",
+      "value-key": "@ID",
+      "command-line-flag": "--@id",
+      "name": "Cytomine User ID for the Annotation Job",
+      "description": "User ID of CellDetect Stardist job analysis",
+      "optional": false,
+      "type": "Number"
+    },
+    {
+      "id": "cytomine_id_positive_term",
+      "value-key": "@ID",
+      "command-line-flag": "--@id",
+      "name": "Cytomine positive cell term ID",
+      "description": "Ontology term ID for the cells that will be classified as Positive",
+      "optional": false,
+      "type": "Domain",
+      "uri": "/api/ontology/$currentOntology$/term.json",
+      "uri-print-attribute": "name",
+      "uri-sort-attribute": "name"
+      },
+    {
+      "id": "cytomine_id_negative_term",
+      "value-key": "@ID",
+      "command-line-flag": "--@id",
+      "name": "Cytomine negative cell term ID",
+      "description": "Ontology term ID for the cells that will be classified as Negative",
+      "optional": false,
+      "type": "Domain",
+      "uri": "/api/ontology/$currentOntology$/term.json",
+      "uri-print-attribute": "name",
+      "uri-sort-attribute": "name"
+      }    
   ],
 
   "schema-version": "cytomine-0.1"
