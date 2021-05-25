@@ -1,8 +1,8 @@
 {
-  "name": "classify_PN_cells_test",
+  "name": "classify_PN_cells",
   "description": "Classification of cells to positive or negative",
   "container-image": {
-    "image": "mizjaggy18/s_classify_pn_cells_test",
+    "image": "mizjaggy18/s_classify_pn_cells",
     "type": "singularity"
   },
   "command-line": "echo [CYTOMINE_HOST] [CYTOMINE_PUBLIC_KEY] [CYTOMINE_PRIVATE_KEY] [CYTOMINE_ID_PROJECT] [CYTOMINE_ID_SOFTWARE] [CYTOMINE_ID_IMAGES] [CYTOMINE_ID_CELL_TERM] [CYTOMINE_ID_ANNOTATION_JOB] [CYTOMINE_ID_USER_JOB] [CYTOMINE_ID_POSITIVE_TERM] [CYTOMINE_ID_NEGATIVE_TERM]",
