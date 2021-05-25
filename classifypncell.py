@@ -29,7 +29,7 @@ from tifffile import imread
 #from csbdeep.utils import Path, normalize
 #from stardist import random_label_cmap
 #from stardist.models import StarDist2D
-from cytomine import Cytomine, models, CytomineJob
+from cytomine import cytomine, models, CytomineJob
 from cytomine.models import Annotation, Ontology, AnnotationTerm, AnnotationCollection, ImageInstanceCollection, Job, Project, ImageInstance, Property, OntologyCollection, Term, RelationTerm, TermCollection
 #from cytomine.models.ontology import Ontology, OntologyCollection, Term, RelationTerm, TermCollection
 #from cytomine.models.property import Tag, TagCollection, PropertyCollection
