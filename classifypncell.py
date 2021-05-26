@@ -29,7 +29,7 @@ from tifffile import imread
 #from csbdeep.utils import Path, normalize
 #from stardist import random_label_cmap
 #from stardist.models import StarDist2D
-from cytomine import cytomine, models, CytomineJob
+from cytomine import Cytomine, models, CytomineJob
 from cytomine.models import Annotation, Ontology, AnnotationTerm, AnnotationCollection, ImageInstanceCollection, Job, Project, ImageInstance, Property, OntologyCollection, Term, RelationTerm, TermCollection
 #from cytomine.models.ontology import Ontology, OntologyCollection, Term, RelationTerm, TermCollection
 #from cytomine.models.property import Tag, TagCollection, PropertyCollection
@@ -103,6 +103,7 @@ def main(argv):
 
         #Go over images
         for id_image in conn.monitor(list_imgs, prefix="Running PN classification on image", period=0.1):
+        #for id_image in list_imgs, prefix="Running PN classification on image", period=0.1):
 
             # #conn.job.update(status=Job.RUNNING, progress=0, statusComment="Fetching ROI annotations...")
             roi_annotations = AnnotationCollection()
@@ -224,7 +225,7 @@ def main(argv):
 
 
                 if cellclass==1:
-                    # print("Positive (H: ", str(hue), ", V: ", str(val), ")")
+                    print("Positive (H: ", str(hue), ", V: ", str(val), ")")
                     id_terms=conn.parameters.cytomine_id_positive_term
                     # tag = Tag("Positive (H: ", str(hue), ", V: ", str(val), ")").save()
                     # print(tag)
@@ -287,5 +288,5 @@ def main(argv):
 if __name__ == "__main__":
     main(sys.argv[1:])
 
-    with cytomine.CytomineJob.from_cli(sys.argv) as cyto_job:
-        run(cyto_job, cyto_job.parameters)
+    #with cytomine.CytomineJob.from_cli(sys.argv) as cyto_job:
+        #run(cyto_job, cyto_job.parameters)
