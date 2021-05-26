@@ -68,6 +68,7 @@ def main(argv):
         # ontology = Ontology("CLASSPNCELLS").save()
         # terms = TermCollection().fetch_with_filter("ontology", ontology.id)
         terms = TermCollection().fetch_with_filter("project", conn.parameters.cytomine_id_project)
+        conn.job.update(status=Job.RUNNING, progress=1, statusComment="Terms collected...")
         print(terms)
        
 
@@ -90,6 +91,8 @@ def main(argv):
 
         #Select images to process
         images = ImageInstanceCollection().fetch_with_filter("project", conn.parameters.cytomine_id_project)
+        conn.job.update(status=Job.RUNNING, progress=2, statusComment="Images gathered...")
+        
         list_imgs = []
         if conn.parameters.cytomine_id_images == 'all':
             for image in images:
@@ -284,5 +287,5 @@ def main(argv):
 if __name__ == "__main__":
     main(sys.argv[1:])
 
-    # with cytomine.CytomineJob.from_cli(sys.argv) as cyto_job:
-        # run(cyto_job, cyto_job.parameters)
+    with cytomine.CytomineJob.from_cli(sys.argv) as cyto_job:
+        run(cyto_job, cyto_job.parameters)
