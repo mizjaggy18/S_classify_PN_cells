@@ -102,10 +102,10 @@ def main(argv):
             print(list_imgs)
 
         #Go over images
-        for id_image in conn.monitor(list_imgs, prefix="Running PN classification on image", period=0.1):
-        #for id_image in list_imgs, prefix="Running PN classification on image", period=0.1):
+        conn.job.update(status=Job.RUNNING, progress=10, statusComment="Running PN classification on image...")
+        #for id_image in conn.monitor(list_imgs, prefix="Running PN classification on image", period=0.1):
+        for id_image in list_imgs:
 
-            # #conn.job.update(status=Job.RUNNING, progress=0, statusComment="Fetching ROI annotations...")
             roi_annotations = AnnotationCollection()
             roi_annotations.project = conn.parameters.cytomine_id_project
             roi_annotations.term = conn.parameters.cytomine_id_cell_term
@@ -120,7 +120,7 @@ def main(argv):
             #for roi in conn.monitor(roi_annotations, prefix="Running detection on ROI", period=0.1):
             for roi in roi_annotations:
                 #Get Cytomine ROI coordinates for remapping to whole-slide
-                #Cytomine cartesian coordinate system, (0,0) is bottom left corner
+                #Cytomine cartesian coordinate system, (0,0) is bottom left corner                
                 print("----------------------------Cells------------------------------")
                 roi_geometry = wkt.loads(roi.location)
                 # print("ROI Geometry from Shapely: {}".format(roi_geometry))
@@ -133,6 +133,7 @@ def main(argv):
                 roi_path=os.path.join(working_path,str(roi_annotations.project)+'/'+str(roi_annotations.image)+'/')
                 print(roi_path)
                 roi_png_filename=os.path.join(roi_path+str(roi.id)+'.png')
+                conn.job.update(status=Job.RUNNING, progress=20, statusComment=roi_png_filename)
                 print("roi_png_filename: %s" %roi_png_filename)
                 roi.dump(dest_pattern=roi_png_filename,alpha=True)
                 #roi.dump(dest_pattern=os.path.join(roi_path,"{id}.png"), mask=True, alpha=True)
