@@ -96,7 +96,7 @@
       "description": "User ID of CellDetect Stardist job analysis",
       "optional": false,
       "type": "ListDomain",
-      "uri": "/api/project/$currentProject$/user.json",
+      "uri": "/api/user_job.json?project=$currentProject$",
       "uri-print-attribute": "username"
     },
     {
