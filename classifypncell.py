@@ -124,17 +124,17 @@ def main(argv):
                 print("----------------------------Cells------------------------------")
                 roi_geometry = wkt.loads(roi.location)
                 # print("ROI Geometry from Shapely: {}".format(roi_geometry))
-                print("ROI Bounds")
-                print(roi_geometry.bounds)
+#                 print("ROI Bounds")
+#                 print(roi_geometry.bounds)
                 minx=roi_geometry.bounds[0]
                 miny=roi_geometry.bounds[3]
                 #Dump ROI image into local PNG file
                 # roi_path=os.path.join(working_path,str(roi_annotations.project)+'/'+str(roi_annotations.image)+'/'+str(roi.id))
                 roi_path=os.path.join(working_path,str(roi_annotations.project)+'/'+str(roi_annotations.image)+'/')
-                print(roi_path)
+#                 print(roi_path)
                 roi_png_filename=os.path.join(roi_path+str(roi.id)+'.png')
                 conn.job.update(status=Job.RUNNING, progress=20, statusComment=roi_png_filename)
-                print("roi_png_filename: %s" %roi_png_filename)
+#                 print("roi_png_filename: %s" %roi_png_filename)
                 roi.dump(dest_pattern=roi_png_filename,alpha=True)
                 #roi.dump(dest_pattern=os.path.join(roi_path,"{id}.png"), mask=True, alpha=True)
 
@@ -176,7 +176,7 @@ def main(argv):
                 # print("weight: ",weight)
                 weight2=1./weight
                 # print("weight2: ",weight2)
-                print("weight2 shape:",weight2.shape)
+#                 print("weight2 shape:",weight2.shape)
                 coord=[c/2,r/2]
                 halfblocksize=blocksize/2
 
@@ -200,13 +200,13 @@ def main(argv):
 
                 currentblock = Jhsv[0:blocksize,0:blocksize,:]
                 # print("currentblock: ",currentblock)
-                print(currentblock.dtype)
+#                 print(currentblock.dtype)
                 currentblockH=currentblock[:,:,0]
                 currentblockV=1-currentblock[:,:,2]
                 hue=sum(sum(currentblockH*weight2))
                 val=sum(sum(currentblockV*weight2))
-                print("hue:", hue)
-                print("val:", val)
+#                 print("hue:", hue)
+#                 print("val:", val)
 
 
                 if hue<2:
@@ -226,13 +226,13 @@ def main(argv):
 
 
                 if cellclass==1:
-                    print("Positive (H: ", str(hue), ", V: ", str(val), ")")
+#                     print("Positive (H: ", str(hue), ", V: ", str(val), ")")
                     id_terms=conn.parameters.cytomine_id_positive_term
                     # tag = Tag("Positive (H: ", str(hue), ", V: ", str(val), ")").save()
                     # print(tag)
                     # id_terms=Term("PositiveCell", ontology.id, "#FF0000").save()
                 elif cellclass==2:
-                    print("Negative (H: ", str(hue), ", V: ", str(val), ")")
+#                     print("Negative (H: ", str(hue), ", V: ", str(val), ")")
                     id_terms=conn.parameters.cytomine_id_negative_term
                     # for t in tags:
                     # tag = Tag("Negative (H: ", str(hue), ", V: ", str(val), ")").save()
