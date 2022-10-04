@@ -5,7 +5,7 @@
     "image": "mizjaggy18/s_classify_pn_cells",
     "type": "singularity"
   },
-  "command-line": "echo [CYTOMINE_HOST] [CYTOMINE_PUBLIC_KEY] [CYTOMINE_PRIVATE_KEY] [CYTOMINE_ID_PROJECT] [CYTOMINE_ID_SOFTWARE] [CYTOMINE_ID_IMAGES] [CYTOMINE_ID_CELL_TERM] [CYTOMINE_ID_ANNOTATION_JOB] [CYTOMINE_ID_USER_JOB] [CYTOMINE_ID_POSITIVE_TERM] [CYTOMINE_ID_NEGATIVE_TERM]",
+  "command-line": "echo [CYTOMINE_HOST] [CYTOMINE_PUBLIC_KEY] [CYTOMINE_PRIVATE_KEY] [CYTOMINE_ID_PROJECT] [CYTOMINE_ID_SOFTWARE] [CYTOMINE_ID_IMAGES] [CYTOMINE_ID_CELL_TERM] [CYTOMINE_ID_ANNOTATION_JOB] [CYTOMINE_ID_USER_JOB] [CYTOMINE_ID_POSITIVE_TERM] [CYTOMINE_ID_NEGATIVE_TERM] [CYTOMINE_TH_SET] [CYTOMINE_ROI_TYPE]",
   "inputs": [
     {
       "id": "cytomine_host",
@@ -123,7 +123,29 @@
       "uri": "/api/ontology/$currentOntology$/term.json",
       "uri-print-attribute": "name",
       "uri-sort-attribute": "name"
-    }    
+    },
+    {
+      "id": "cytomine_th_set",
+      "value-key": "[@ID]",
+      "command-line-flag": "--@id",
+      "name": "Threshold set for hue and value",
+      "description": "1: mod-th, 2: default-th",
+      "default-value": 1,
+      "set-by-server": false,
+      "optional": false,
+      "type": "Number"
+    },
+    {
+      "id": "cytomine_roi_type",
+      "value-key": "[@ID]",
+      "command-line-flag": "--@id",
+      "name": "ROI type to be analyzed (alpha or crop)",
+      "description": "1: alpha, 2: crop",
+      "default-value": 1,
+      "set-by-server": false,
+      "optional": false,
+      "type": "Number"
+    }          
   ],
 
   "schema-version": "cytomine-0.1"
