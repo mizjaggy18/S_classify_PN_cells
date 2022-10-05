@@ -237,7 +237,7 @@ def run(cyto_job, parameters):
 
                 if cellclass==1:#negative
                     id_terms=parameters.cytomine_id_negative_term
-                    class_nagative=class_nagative+1
+                    class_negative=class_negative+1
                 elif cellclass==2:#positive
                     id_terms=parameters.cytomine_id_positive_term  
                     class_positive=class_positive+1
