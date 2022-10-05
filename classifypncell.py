@@ -236,17 +236,17 @@ def run(cyto_job, parameters):
 
 
                 if cellclass==1:#negative
-                    id_terms=conn.parameters.cytomine_id_negative_term
+                    id_terms=parameters.cytomine_id_negative_term
                     class_nagative=class_nagative+1
                 elif cellclass==2:#positive
-                    id_terms=conn.parameters.cytomine_id_positive_term  
+                    id_terms=parameters.cytomine_id_positive_term  
                     class_positive=class_positive+1
 
                 cytomine_annotations = AnnotationCollection()
                 annotation=roi_geometry
                 cytomine_annotations.append(Annotation(location=annotation.wkt,#location=roi_geometry,
-                                                       id_image=id_image,#conn.parameters.cytomine_id_image,
-                                                       id_project=conn.parameters.cytomine_id_project,
+                                                       id_image=id_image,#parameters.cytomine_id_image,
+                                                       id_project=parameters.cytomine_id_project,
                                                        id_terms=[id_terms]))
                 print(".",end = '',flush=True)
 
