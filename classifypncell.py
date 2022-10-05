@@ -22,6 +22,7 @@ from __future__ import print_function, unicode_literals, absolute_import, divisi
 import sys
 import numpy as np
 import os
+import cytomine
 from shapely.geometry import shape, box, Polygon,Point
 from shapely import wkt
 from glob import glob
@@ -35,11 +36,13 @@ from cytomine.models import Annotation, Ontology, AnnotationTerm, AnnotationColl
 #from cytomine.models.property import Tag, TagCollection, PropertyCollection
 #from cytomine.utilities.software import parse_domain_list, setup_classify, stringify
 
-
+from argparse import ArgumentParser
 from PIL import Image
 import argparse
 import json
 import logging
+import logging.handlers
+import shutil
 
 import cv2
 import math
