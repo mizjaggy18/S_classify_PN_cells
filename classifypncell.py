@@ -45,101 +45,107 @@ import cv2
 import math
 
 __author__ = "WSH Munirah W Ahmad <wshmunirah@gmail.com>"
-__copyright__ = "MFA Fauzi, et al. 2015 (https://doi.org/10.1007/978-3-319-19156-0_17)"
+__copyright__ = "PN Classification: MFA Fauzi, et al. 2015 (https://doi.org/10.1007/978-3-319-19156-0_17)"
 __version__ = "0.1.0"
 
 
 
-def main(argv):
-    with CytomineJob.from_cli(argv) as conn:
-    # with Cytomine(argv) as conn:
-        print(conn.parameters)
+def run(cyto_job, parameters):
+    logging.info("----- PN-Classificationh v%s -----", __version__)
+    logging.info("Entering run(cyto_job=%s, parameters=%s)", cyto_job, parameters)
 
-        conn.job.update(status=Job.RUNNING, progress=0, statusComment="Initialization...")
-        base_path = "{}".format(os.getenv("HOME")) # Mandatory for Singularity
-        working_path = os.path.join(base_path,str(conn.job.id))
+    job = cyto_job.job
+    user = job.userJob
+    project = cyto_job.project
+    threshold_set=parameters.cytomine_th_set
+    roi_type=parameters.cytomine_roi_type
+    write_hv=parameters.cytomine_write_hv
 
-        # with Cytomine(host=params.host, public_key=params.public_key, private_key=params.private_key,
-        #           verbose=logging.INFO) as cytomine:
+    terms = TermCollection().fetch_with_filter("project", parameters.cytomine_id_project)
+    job.update(status=Job.RUNNING, progress=1, statusComment="Terms collected...")
+    print(terms)
 
-        # ontology = Ontology("classPNcells"+str(conn.parameters.cytomine_id_project)).save()
-        # ontology_collection=OntologyCollection().fetch()
-        # print(ontology_collection)
-        # ontology = Ontology("CLASSPNCELLS").save()
-        # terms = TermCollection().fetch_with_filter("ontology", ontology.id)
-        terms = TermCollection().fetch_with_filter("project", conn.parameters.cytomine_id_project)
-        conn.job.update(status=Job.RUNNING, progress=1, statusComment="Terms collected...")
-        print(terms)
-       
-
-        # term_P = Term("PositiveCell", ontology.id, "#FF0000").save()
-        # term_N = Term("NegativeCell", ontology.id, "#00FF00").save()
-        # term_P = Term("PositiveCell", ontology, "#FF0000").save()
-        # term_N = Term("NegativeCell", ontology, "#00FF00").save()
-
-        # Get all the terms of our ontology
-        # terms = TermCollection().fetch_with_filter("ontology", ontology.id)
-        # terms = TermCollection().fetch_with_filter("ontology", ontology)
-        # print(terms)
+    start_time=time.time()
+    
+    #Select images to process
+    images = ImageInstanceCollection().fetch_with_filter("project", project.id)       
+    list_imgs = []
+    if parameters.cytomine_id_images == 'all':
+        for image in images:
+            list_imgs.append(int(image.id))
+    else:
+        list_imgs = parameters.cytomine_id_images
+        list_imgs2 = list_imgs.split(',')
         
-        # #Loading pre-trained Stardist model
-        # np.random.seed(17)
-        # lbl_cmap = random_label_cmap()
-        # #Stardist H&E model downloaded from https://github.com/mpicbg-csbd/stardist/issues/46
-        # #Stardist H&E model downloaded from https://drive.switch.ch/index.php/s/LTYaIud7w6lCyuI
-        # model = StarDist2D(None, name='2D_versatile_HE', basedir='/models/')   #use local model file in ~/models/2D_versatile_HE/
+    print('Print list images:', list_imgs2)
+    job.update(status=Job.RUNNING, progress=30, statusComment="Images gathered...")
 
-        #Select images to process
-        images = ImageInstanceCollection().fetch_with_filter("project", conn.parameters.cytomine_id_project)
-        conn.job.update(status=Job.RUNNING, progress=2, statusComment="Images gathered...")
+    #Set working path
+    working_path = os.path.join("tmp", str(job.id))
+   
+    if not os.path.exists(working_path):
+        logging.info("Creating working directory: %s", working_path)
+        os.makedirs(working_path)
+    try:
+
+        id_project=project.id   
+        output_path = os.path.join(working_path, "PN_classification_results.csv")
+        f= open(output_path,"w+")
+
+        f.write("AnnotationID;ImageID;ProjectID;JobID;TermID;UserID;Area;Perimeter;Hue;Value;WKT \n")
         
-        list_imgs = []
-        if conn.parameters.cytomine_id_images == 'all':
-            for image in images:
-                list_imgs.append(int(image.id))
-        else:
-            list_imgs = [int(id_img) for id_img in conn.parameters.cytomine_id_images.split(',')]
-            print(list_imgs)
-
         #Go over images
-        conn.job.update(status=Job.RUNNING, progress=10, statusComment="Running PN classification on image...")
-        #for id_image in conn.monitor(list_imgs, prefix="Running PN classification on image", period=0.1):
-        for id_image in list_imgs:
-
+        for id_image in list_imgs2:    
+            print('Current image:', id_image)
             roi_annotations = AnnotationCollection()
-            roi_annotations.project = conn.parameters.cytomine_id_project
-            roi_annotations.term = conn.parameters.cytomine_id_cell_term
+            roi_annotations.project = id_project
+            roi_annotations.term = parameters.cytomine_id_cell_term
             roi_annotations.image = id_image #conn.parameters.cytomine_id_image
-            roi_annotations.job = conn.parameters.cytomine_id_annotation_job
-            roi_annotations.user = conn.parameters.cytomine_id_user_job
+            roi_annotations.job = parameters.cytomine_id_annotation_job
+            roi_annotations.user = parameters.cytomine_id_user_job
             roi_annotations.showWKT = True
             roi_annotations.fetch()
-            print(roi_annotations)
+            # print(roi_annotations)
+
+            hue_all=[]
+            val_all=[]
+            class_positive = 0
+            class_negative = 0
 
             #Go over ROI in this image
             #for roi in conn.monitor(roi_annotations, prefix="Running detection on ROI", period=0.1):
-            for roi in roi_annotations:
+            roi_numel=len(roi_annotations)
+            x=range(1,roi_numel)
+            increment=np.multiply(10000,x)            
+            job.update(status=Job.RUNNING, progress=50, statusComment="Running PN classification on nuclei...")
+            for i, roi in enumerate(roi_annotations):
+                
+                for inc in increment:
+                    if i==inc:
+                        shutil.rmtree(roi_path, ignore_errors=True)
+                        import gc
+                        gc.collect()
+                        print("i==", inc)
+                
                 #Get Cytomine ROI coordinates for remapping to whole-slide
                 #Cytomine cartesian coordinate system, (0,0) is bottom left corner                
                 print("----------------------------Cells------------------------------")
                 roi_geometry = wkt.loads(roi.location)
-                # print("ROI Geometry from Shapely: {}".format(roi_geometry))
-#                 print("ROI Bounds")
-#                 print(roi_geometry.bounds)
                 minx=roi_geometry.bounds[0]
                 miny=roi_geometry.bounds[3]
                 #Dump ROI image into local PNG file
                 # roi_path=os.path.join(working_path,str(roi_annotations.project)+'/'+str(roi_annotations.image)+'/'+str(roi.id))
                 roi_path=os.path.join(working_path,str(roi_annotations.project)+'/'+str(roi_annotations.image)+'/')
-#                 print(roi_path)
                 roi_png_filename=os.path.join(roi_path+str(roi.id)+'.png')
-                conn.job.update(status=Job.RUNNING, progress=20, statusComment=roi_png_filename)
-#                 print("roi_png_filename: %s" %roi_png_filename)
-                roi.dump(dest_pattern=roi_png_filename,alpha=True)
-                #roi.dump(dest_pattern=os.path.join(roi_path,"{id}.png"), mask=True, alpha=True)
-
-                # im=Image.open(roi_png_filename)
-
+                
+                
+                ## --- ROI types: crop or alpha ---
+                if roi_type==1: #alpha
+                    roi.dump(dest_pattern=roi_png_filename,mask=True)
+                elif roi_type==2: #crop
+                    roi.dump(dest_pattern=roi_png_filename)
+                    
+               
                 J = cv2.imread(roi_png_filename,cv2.IMREAD_UNCHANGED)
                 J = cv2.cvtColor(J, cv2.COLOR_BGRA2RGBA) 
                 [r, c, h]=J.shape
@@ -173,10 +179,7 @@ def main(argv):
                 rrcc=np.asarray(cc2)+np.asarray(rr2)
 
                 weight=np.sqrt(rrcc)
-                # print("weight: ",weight)
                 weight2=1./weight
-                # print("weight2: ",weight2)
-#                 print("weight2 shape:",weight2.shape)
                 coord=[c/2,r/2]
                 halfblocksize=blocksize/2
 
@@ -192,89 +195,51 @@ def main(argv):
                 Jhsv[:,:,0]=Jhsv[:,:,0]*Jalphaloc
                 Jhsv[:,:,1]=Jhsv[:,:,1]*Jalphaloc
                 Jhsv[:,:,2]=Jhsv[:,:,2]*Jalphaloc
-                # print("Jhsv: ",Jhsv)
-                
-
-                # print("Jhsv size:",Jhsv.shape)
-                # print("Jhsv class:",Jhsv.dtype)
 
                 currentblock = Jhsv[0:blocksize,0:blocksize,:]
-                # print("currentblock: ",currentblock)
-#                 print(currentblock.dtype)
                 currentblockH=currentblock[:,:,0]
                 currentblockV=1-currentblock[:,:,2]
                 hue=sum(sum(currentblockH*weight2))
                 val=sum(sum(currentblockV*weight2))
 #                 print("hue:", hue)
 #                 print("val:", val)
+                hue_all.append(hue)
+                val_all.append(val)
 
-
-                if hue<2:
-                   cellclass=1
-                elif val<15:
-                   cellclass=2
-                else:
-                    if hue<30 or val>40:
+                if threshold_set==1:
+                    #--- Threshold values (modified-used on v0.1.25 and earlier)---
+                    # FP case (positive as negative): Hue 4.886034191808089 Val 14.45894207427296 
+                    if hue<5:#mod1<2; mod2<5
+                       cellclass=2
+                    elif val<15:
                        cellclass=1
                     else:
+                        if hue<30 or val>40:
+                           cellclass=2
+                        else:
+                           cellclass=1
+                    #--------------------------------------------------------------
+                elif threshold_set==2:
+                    #--- Threshold values (original-used on v2 from 18 April 2022)---
+                    if val>50:
                        cellclass=2
+                    else:
+                        if hue>70:
+                            cellclass=1
+                        else:
+                            cellclass=2
+                    #----------------------------------------------------------------
 
-                # tags = TagCollection().fetch()
-                # tags = TagCollection()
-                # print(tags)
 
-
-
-                if cellclass==1:
-#                     print("Positive (H: ", str(hue), ", V: ", str(val), ")")
-                    id_terms=conn.parameters.cytomine_id_positive_term
-                    # tag = Tag("Positive (H: ", str(hue), ", V: ", str(val), ")").save()
-                    # print(tag)
-                    # id_terms=Term("PositiveCell", ontology.id, "#FF0000").save()
-                elif cellclass==2:
-#                     print("Negative (H: ", str(hue), ", V: ", str(val), ")")
+                if cellclass==1:#negative
                     id_terms=conn.parameters.cytomine_id_negative_term
-                    # for t in tags:
-                    # tag = Tag("Negative (H: ", str(hue), ", V: ", str(val), ")").save()
-                    # print(tag)
-                    # id_terms=Term("NegativeCell", ontology.id, "#00FF00").save()
-
-                        # First we create the required resources 
-                    
+                    class_nagative=class_nagative+1
+                elif cellclass==2:#positive
+                    id_terms=conn.parameters.cytomine_id_positive_term  
+                    class_positive=class_positive+1
 
                 cytomine_annotations = AnnotationCollection()
-                # property_collection = PropertyCollection(uri()).fetch("annotation",id_image)
-                # property_collection = PropertyCollection().uri()
-                # print(property_collection) 
-                # print(cytomine_annotations)
-
-                # property_collection.append(Property(Annotation().fetch(id_image), key="Hue", value=str(hue)))
-                # property_collection.append(Property(Annotation().fetch(id_image), key="Val", value=str(val)))
-                # property_collection.save()
-                  
-
-
-                # prop1 = Property(Annotation().fetch(id_image), key="Hue", value=str(hue)).save()
-                # prop2 = Property(Annotation().fetch(id_image), key="Val", value=str(val)).save()
-                
-
-                # prop1.Property(Annotation().fetch(id_image), key="Hue", value=str(hue)).save()
-                # prop2.Property(Annotation().fetch(id_image), key="Val", value=str(val)).save()
-                 
-                # for pos, polygroup in enumerate(roi_geometry,start=1):
-                #     points=list()
-                #     for i in range(len(polygroup[0])):
-                #         p=Point(minx+polygroup[1][i],miny-polygroup[0][i])
-                #         points.append(p)
-
                 annotation=roi_geometry
-
-                # tags.append(TagDomainAssociation(Annotation().fetch(id_image, tag.id))).save()
-
-                # association = append(TagDomainAssociation(Annotation().fetch(id_image, tag.id))).save()
-                # print(association)
-
-
                 cytomine_annotations.append(Annotation(location=annotation.wkt,#location=roi_geometry,
                                                        id_image=id_image,#conn.parameters.cytomine_id_image,
                                                        id_project=conn.parameters.cytomine_id_project,
@@ -283,11 +248,56 @@ def main(argv):
 
                 #Send Annotation Collection (for this ROI) to Cytomine server in one http request
                 ca = cytomine_annotations.save()
+                
+            end_classify_time=time.time()
+            
+            if write_hv == 1:
+                cytomine_annotations = AnnotationCollection()    
+                cytomine_annotations.project = project.id
+                cytomine_annotations.image = id_image
+                cytomine_annotations.job = job.id
+                cytomine_annotations.user = user
+                cytomine_annotations.showAlgo = True
+                cytomine_annotations.showWKT = True
+                cytomine_annotations.showMeta = True
+                cytomine_annotations.showGIS = True
+                cytomine_annotations.showTerm = True
+                cytomine_annotations.annotation = True
+                cytomine_annotations.fetch()
+                hue_all.reverse()
+                val_all.reverse()
 
-        conn.job.update(status=Job.TERMINATED, progress=100, statusComment="Finished.")
+                ## --------- WRITE Hue and Value values into annotation Property -----------
+                job.update(status=Job.RUNNING, progress=80, statusComment="Writing classification results on CSV...")
+                for i, annotation in enumerate(cytomine_annotations):
+                    f.write("{};{};{};{};{};{};{};{};{};{};{}\n".format(annotation.id,annotation.image,annotation.project,job.id,annotation.term,annotation.user,annotation.area,annotation.perimeter,str(hue_all[i]),str(val_all[i]),annotation.location))
+                    Property(Annotation().fetch(annotation.id), key='Hue', value=str(hue_all[i])).save()
+                    Property(Annotation().fetch(annotation.id), key='Val', value=str(val_all[i])).save()
+                    Property(Annotation().fetch(annotation.id), key='ID', value=str(annotation.id)).save()
+                ##---------------------------------------------------------------------------
+            
+            f.write("\n")
+            f.write("Image ID;Class Positive;Class Negative;Total Nuclei;Execution Time \n")
+            f.write("{};{};{};{};{}\n".format(id_image,class_positive,class_negative,class_positive+class_negative,end_classify_time-start_time))
+            
+
+        f.close()
+        
+        job.update(status=Job.RUNNING, progress=99, statusComment="Summarizing results...")
+        job_data = JobData(job.id, "Generated File", "PN_classification_results.csv").save()
+        job_data.upload(output_path)
+
+    finally:
+        logging.info("Deleting folder %s", working_path)
+        shutil.rmtree(working_path, ignore_errors=True)
+        logging.debug("Leaving run()")
+
+
+    job.update(status=Job.TERMINATED, progress=100, statusComment="Finished.") 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    logging.debug("Command: %s", sys.argv)
 
-    #with cytomine.CytomineJob.from_cli(sys.argv) as cyto_job:
-        #run(cyto_job, cyto_job.parameters)
+    with cytomine.CytomineJob.from_cli(sys.argv) as cyto_job:
+        run(cyto_job, cyto_job.parameters)
+        
