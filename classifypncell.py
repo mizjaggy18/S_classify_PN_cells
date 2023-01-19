@@ -121,7 +121,7 @@ def run(cyto_job, parameters):
             roi_numel=len(roi_annotations)
             x=range(1,roi_numel)
             increment=np.multiply(10000,x)            
-            job.update(status=Job.RUNNING, progress=50, statusComment="Running PN classification on nuclei...")
+            job.update(status=Job.RUNNING, progress=60, statusComment="Running PN classification on nuclei...")
             for i, roi in enumerate(roi_annotations):
                 
                 for inc in increment:
@@ -176,8 +176,8 @@ def run(cyto_job, parameters):
                 # print("cc shape:",cc.shape)
  
  
-                cc1=np.asarray(cc)-16.5
-                rr1=np.asarray(rr)-16.5
+                cc1=np.asarray(cc)-(blocksize/2 + .5)
+                rr1=np.asarray(rr)-(blocksize/2 + .5)
                 cc2=np.asarray(cc1)**2
                 rr2=np.asarray(rr1)**2
                 rrcc=np.asarray(cc2)+np.asarray(rr2)
@@ -272,7 +272,7 @@ def run(cyto_job, parameters):
                 val_all.reverse()
 
                 ## --------- WRITE Hue and Value values into annotation Property -----------
-                job.update(status=Job.RUNNING, progress=80, statusComment="Writing classification results on CSV...")
+                job.update(status=Job.RUNNING, progress=60, statusComment="Writing classification results on CSV...")
                 for i, annotation in enumerate(cytomine_annotations):
                     f.write("{};{};{};{};{};{};{};{};{};{};{}\n".format(annotation.id,annotation.image,annotation.project,job.id,annotation.term,annotation.user,annotation.area,annotation.perimeter,str(hue_all[i]),str(val_all[i]),annotation.location))
                     Property(Annotation().fetch(annotation.id), key='Hue', value=str(hue_all[i])).save()
