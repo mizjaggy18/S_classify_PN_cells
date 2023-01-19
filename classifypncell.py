@@ -176,8 +176,8 @@ def run(cyto_job, parameters):
                 # print("cc shape:",cc.shape)
  
  
-                cc1=np.asarray(cc)-(blocksize/2 + .5)
-                rr1=np.asarray(rr)-(blocksize/2 + .5)
+                cc1=np.asarray(cc)-(round(blocksize/2)) + .5
+                rr1=np.asarray(rr)-(round(blocksize/2)) + .5
                 cc2=np.asarray(cc1)**2
                 rr2=np.asarray(rr1)**2
                 rrcc=np.asarray(cc2)+np.asarray(rr2)
