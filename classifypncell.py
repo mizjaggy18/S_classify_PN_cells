@@ -185,7 +185,7 @@ def run(cyto_job, parameters):
                 weight=np.sqrt(rrcc)
                 weight2=1./weight
                 coord=[c/2,r/2]
-                halfblocksize=blocksize/2
+                halfblocksize=math.floor(blocksize/2)
 
                 y=round(coord[1])
                 x=round(coord[0])
@@ -201,7 +201,7 @@ def run(cyto_job, parameters):
                 Jhsv[:,:,2]=Jhsv[:,:,2]*Jalphaloc
 
 #                 currentblock = Jhsv[0:blocksize,0:blocksize,:] #block from (0,0)
-                currentblock = Jhsv[y-floor(halfblocksize)-1:y+floor(halfblocksize),x-floor(halfblocksize)-1:x+floor(halfblocksize),:] #block from centroid               
+                currentblock = Jhsv[y-halfblocksize-1:y+halfblocksize,x-halfblocksize-1:x+halfblocksize,:] #block from centroid               
                 currentblockH=currentblock[:,:,0]
                 currentblockV=1-currentblock[:,:,2]
                 hue=sum(sum(currentblockH*weight2))
