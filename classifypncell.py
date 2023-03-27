@@ -200,8 +200,8 @@ def run(cyto_job, parameters):
                 Jhsv[:,:,1]=Jhsv[:,:,1]*Jalphaloc
                 Jhsv[:,:,2]=Jhsv[:,:,2]*Jalphaloc
 
-#                 currentblock = Jhsv[0:blocksize,0:blocksize,:]
-                currentblock = Jhsv[y-floor(halfblocksize)-1:y+floor(halfblocksize),x-floor(halfblocksize)-1:x+floor(halfblocksize),:]                
+#                 currentblock = Jhsv[0:blocksize,0:blocksize,:] #block from (0,0)
+                currentblock = Jhsv[y-floor(halfblocksize)-1:y+floor(halfblocksize),x-floor(halfblocksize)-1:x+floor(halfblocksize),:] #block from centroid               
                 currentblockH=currentblock[:,:,0]
                 currentblockV=1-currentblock[:,:,2]
                 hue=sum(sum(currentblockH*weight2))
