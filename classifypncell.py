@@ -158,9 +158,15 @@ def run(cyto_job, parameters):
 
                 if r < c:
                     blocksize=r
+                    coord=[r/2,r/2]
                 else:
                     blocksize=c
+                    coord=[c/2,c/2]
+                    
+                if (blocksize % 2) != 0:
+                    blocksize=blocksize-1
                 # print("blocksize:",blocksize)
+                
                 rr=np.zeros((blocksize,blocksize))
                 cc=np.zeros((blocksize,blocksize))
 
@@ -174,19 +180,17 @@ def run(cyto_job, parameters):
                 for i in zz:
                     cc[:,i-1]=zz
                 # print("cc shape:",cc.shape)
+                halfblocksize=round(blocksize/2)
  
- 
-                cc1=np.asarray(cc)-(round(blocksize/2)) + .5
-                rr1=np.asarray(rr)-(round(blocksize/2)) + .5
+                cc1=np.asarray(cc)-(halfblocksize) + .5 
+                rr1=np.asarray(rr)-(halfblocksize) + .5 
                 cc2=np.asarray(cc1)**2
                 rr2=np.asarray(rr1)**2
                 rrcc=np.asarray(cc2)+np.asarray(rr2)
 
                 weight=np.sqrt(rrcc)
                 weight2=1./weight
-                coord=[c/2,r/2]
-                halfblocksize=math.floor(blocksize/2)
-
+                
                 y=round(coord[1])
                 x=round(coord[0])
 
@@ -201,7 +205,7 @@ def run(cyto_job, parameters):
                 Jhsv[:,:,2]=Jhsv[:,:,2]*Jalphaloc
 
 #                 currentblock = Jhsv[0:blocksize,0:blocksize,:] #block from (0,0)
-                currentblock = Jhsv[y-halfblocksize-1:y+halfblocksize,x-halfblocksize-1:x+halfblocksize,:] #block from centroid               
+                currentblock = Jhsv[y-halfblocksize:y+halfblocksize,x-halfblocksize:x+halfblocksize,:] #block from centroid               
                 currentblockH=currentblock[:,:,0]
                 currentblockV=1-currentblock[:,:,2]
                 hue=sum(sum(currentblockH*weight2))
@@ -273,7 +277,7 @@ def run(cyto_job, parameters):
                 val_all.reverse()
 
                 ## --------- WRITE Hue and Value values into annotation Property -----------
-                job.update(status=Job.RUNNING, progress=60, statusComment="Writing classification results on CSV...")
+#                 job.update(status=Job.RUNNING, progress=60, statusComment="Writing classification results on CSV...")
                 for i, annotation in enumerate(cytomine_annotations):
                     f.write("{};{};{};{};{};{};{};{};{};{};{}\n".format(annotation.id,annotation.image,annotation.project,job.id,annotation.term,annotation.user,annotation.area,annotation.perimeter,str(hue_all[i]),str(val_all[i]),annotation.location))
                     Property(Annotation().fetch(annotation.id), key='Hue', value=str(hue_all[i])).save()
